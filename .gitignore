@@ -1,0 +1,31 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environment folders
+.venv/
+venv/
+env/
+
+# Secrets and environment files
+.env
+
+# OS-specific files
+.DS_Store
+
+# IDE/editor folders
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Optional: Coverage/test output
+htmlcov/
+.coverage
+coverage.xml
+pytest_cache/
+
+# Optional: Jupyter notebooks checkpoints
+.ipynb_checkpoints/
