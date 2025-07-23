@@ -93,6 +93,10 @@ def mongo_health():
 
 # API Endpoints
 
+@app.get("/")
+def root():
+    return {"message": "FastAPI backend for Game Leaderboard is running!"}
+
 @app.post("/score", response_model=dict)
 def update_score(data: PlayerScore):
     try:
