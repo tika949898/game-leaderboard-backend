@@ -157,14 +157,18 @@ def get_player_history(player_name: str):
             {"player": player_name}, {"_id": 0}
         ).sort("timestamp", -1)
 
-        history = [
-            {
-                "player": item["player"],
-                "score": item["score"],
-                "timestamp": item["timestamp"].isoformat()
-            }
-            for item in history_cursor
-        ]
+history = [
+    {
+        "player": item["player"],
+        "score": item["score"],
+        "timestamp": (
+            item["timestamp"].isoformat()
+            if isinstance(item["timestamp"], datetime)
+            else str(item["timestamp"])
+        )
+    }
+    for item in history_cursor
+]
 
         if history:
             r.setex(cache_key, 3600, json.dumps(history))
