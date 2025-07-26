@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from redis.exceptions import RedisError
 from pydantic import BaseModel, Field
 from datetime import datetime
+import traceback  # <-- add this to the top if not already imported
 from typing import List
 from urllib.parse import unquote
 import logging
@@ -28,7 +29,10 @@ app = FastAPI()
 # CORS Configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Adjust if frontend deployed elsewhere
+    allow_origins=[
+        "http://localhost:3000",  # local development
+        "https://game-leaderboard-frontend.vercel.app"  # deployed frontend
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -153,22 +157,23 @@ def get_player_history(player_name: str):
         if cached_data:
             return json.loads(cached_data)
 
+        # 🔧 Removed .sort("timestamp", -1)
         history_cursor = history_collection.find(
             {"player": player_name}, {"_id": 0}
-        ).sort("timestamp", -1)
-
-history = [
-    {
-        "player": item["player"],
-        "score": item["score"],
-        "timestamp": (
-            item["timestamp"].isoformat()
-            if isinstance(item["timestamp"], datetime)
-            else str(item["timestamp"])
         )
-    }
-    for item in history_cursor
-]
+
+        history = [
+            {
+                "player": item["player"],
+                "score": item["score"],
+                "timestamp": (
+                    item["timestamp"].isoformat()
+                    if isinstance(item["timestamp"], datetime)
+                    else str(item["timestamp"])
+                )
+            }
+            for item in history_cursor
+        ]
 
         if history:
             r.setex(cache_key, 3600, json.dumps(history))
@@ -178,7 +183,6 @@ history = [
     except Exception as e:
         logging.error(f"Error fetching history for {player_name}: {e}")
         raise HTTPException(status_code=500, detail="Failed to retrieve history")
-
 
 @app.get("/all-scores", response_model=List[dict])
 def get_all_scores():
