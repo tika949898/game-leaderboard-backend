@@ -4,7 +4,7 @@ certifi==2025.6.15
 click==8.2.1
 colorama==0.4.6
 dnspython==2.7.0
-ecdsa==0.19.1
+ecdsa==0.19.2
 fastapi==0.116.0
 fastapi-jwt-auth @ git+https://github.com/IndominusByte/fastapi-jwt-auth@a6c06193319da0e4976c7472966f3a2891e0d50c
 h11==0.16.0
